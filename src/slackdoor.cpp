@@ -6,7 +6,8 @@
 
 #include <Particle.h>
 
-
+// We select this system mode in order to control _when_ the potentially
+// lengthy network connection process runs.
 SYSTEM_MODE(SEMI_AUTOMATIC);
 
 const uint16_t g_user_led = D7; 
