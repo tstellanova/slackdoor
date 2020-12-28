@@ -1,8 +1,12 @@
 # slackdoor
 
 A Particle example that shows how to trigger a webhook Slack integration whenever a doorbell is pressed. 
+In addition to building and flashing this firmware onto your Particle device (such as an Argon),
+you will need to provide:
+-  a webhook integration in your Particle Cloud account
+- a Slack application and webhook in your Slack account
 
-## Welcome to your project!
+## Project Structure
 
 Every new Particle project is composed of 3 important elements that you'll see have been created in your project directory for slackdoor.
 
@@ -33,4 +37,3 @@ When you're ready to compile your project, make sure you have the correct Partic
 - Everything in the `/src` folder, including your `.cpp` application file
 - The `project.properties` file for your project
 - Any libraries stored under `lib/<libraryname>/src`
-# slackdoor
