@@ -6,7 +6,26 @@ you will need to provide:
 -  a webhook integration in your Particle Cloud account
 - a Slack application and webhook in your Slack account
 
-## Project Structure
+## Slack application
+
+Follow [instructions from Slack](https://slack.com/help/articles/115005265063-Incoming-webhooks-for-Slack#set-up-incoming-webhooks)
+for creating an incoming webhook in your Slack org. 
+
+## Webhook
+
+Create a new webhook integration in your Particle Cloud account via the 
+[Particle Console](https://console.particle.io/integrations/webhooks/create)
+with settings similar to this:
+
+- Event Name: evt_door
+- URL: https://hooks.slack.com/services/XXXXXX/YYYYY/ZZZZZZ
+- Request Type: Post
+- Request Format: JSON
+- Device: Any or specific device
+
+The URL should be the same as the Slack "Incoming Webhook URL" you created earlier
+
+## Firmware Structure
 
 Every new Particle project is composed of 3 important elements that you'll see have been created in your project directory for slackdoor.
 
