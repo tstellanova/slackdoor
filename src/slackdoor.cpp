@@ -68,7 +68,7 @@ void publish_doorbell_event() {
   wait_for_connection();
 
   // Trigger the webhook integration
-  Particle.publish("household/frontdoor/bell02", EMPTY_EVT_DATA, PRIVATE);
+  Particle.publish("household/frontdoor/bell01", EMPTY_EVT_DATA, PRIVATE);
   delay(50);
 
   indicate_doorbell_working();
@@ -93,7 +93,7 @@ bool battery_powered() {
   #endif
 }
 
-// Interrupt service routine called when button is pressed:
+// Interrupt service routine called when doorbell button is pressed:
 // We don't do much processing here, just note that the button was pressed
 void isr_button_pressed() {
   g_button_pressed = true;
@@ -117,7 +117,7 @@ void loop() {
   set_user_led_state(LOW);
   
   if (battery_powered())  {
-    // cleanup interrupt in case it's previosly attached
+    // cleanup interrupt in case it's previously attached
     detachInterrupt(BUTTON_PIN);
 
     // sleep until the doorbell is pressed
@@ -132,16 +132,15 @@ void loop() {
     }
   }
   else {
-
     if (g_button_pressed) {
       g_button_pressed = false;
       publish_doorbell_event();
     }
     else {
+      // ensure that we're connected to the network
+      wait_for_connection();
       // detect when button is pressed
       attachInterrupt(BUTTON_PIN, isr_button_pressed, FALLING);
-      // ensure that we're connected to the network, awaiting updates
-      wait_for_connection();
       indicate_doorbell_idle();
     }
   }
