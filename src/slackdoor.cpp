@@ -28,7 +28,7 @@ const unsigned int TONE_G4 = 392;
 const int NOTE_DURATION_MS = 500;
 
 static PinState g_user_led_state = LOW;
-volatile bool g_button_pressed = false;
+static volatile bool g_button_pressed = false;
 
 SerialLogHandler g_log_handler(LOG_LEVEL_WARN, { // Logging level for non-application messages
     { "app", LOG_LEVEL_INFO } // Logging level for application messages
@@ -48,7 +48,7 @@ void sync_play_tone(unsigned int frequency, int milliseconds) {
 
 void play_bell_tone() {
     for (int count= 0; count < 1; count++) {
-        // doorbell close encounters
+        // tinny "close encounters"
         sync_play_tone(2*TONE_D4, NOTE_DURATION_MS);
         sync_play_tone(2*TONE_E4, NOTE_DURATION_MS);
         sync_play_tone(2*TONE_C4, NOTE_DURATION_MS);
@@ -59,11 +59,13 @@ void play_bell_tone() {
     noTone(SPKR_PIN);
 }
 
+// force the user LED to a particular state
 void set_user_led_state(PinState mode) {
     g_user_led_state = mode;
     digitalWrite(USER_LED_PIN, g_user_led_state);
 }
 
+// invert the user LED state
 void togger_user_led_state() {
     PinState next_state = (HIGH == g_user_led_state) ? LOW : HIGH;
     set_user_led_state(next_state);
@@ -73,7 +75,7 @@ void togger_user_led_state() {
 void indicate_doorbell_working() {
   for (int i = 0; i < 30; i++) {
     Particle.process();
-    delay(500);
+    delay(250);
     togger_user_led_state();
   }
 }
@@ -118,7 +120,6 @@ bool battery_powered() {
   #if(PLATFORM_ID == PLATFORM_ARGON)
     // check whether we have external (non-battery) power
     int usb_pwr_val = digitalRead(PWR);
-    Log.info("usb_pwr_val: %d", usb_pwr_val);
     return (LOW == usb_pwr_val);
   #elif(PLATFORM_ID == PLATFORM_BORON)
     // check whether we are discharging the battery 
@@ -141,9 +142,10 @@ void isr_button_pressed() {
 // setup() runs once, when the device is first turned on.
 void setup() {
   pinMode(USER_LED_PIN, OUTPUT);
+  pinMode(SPKR_PIN, OUTPUT);// PWM tone output pin
+
   // Configure button input pin as pulldown-- when button is pressed it will connect to +V and rise
   pinMode(BUTTON_PIN, INPUT_PULLDOWN);
-  pinMode(SPKR_PIN, OUTPUT);// PWM tone output pin
 
   #if(PLATFORM_ID == PLATFORM_ARGON)
   pinMode(PWR, INPUT);
