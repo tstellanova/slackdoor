@@ -36,6 +36,7 @@ void indicate_doorbell_idle() {
     delay(500);
 }
 
+
 // Someone has pressed the doorbell button: publish an event to the Particle Cloud
 void publish_doorbell_event() {
   // Indicate that we're contacting the cloud
@@ -81,7 +82,8 @@ void setup() {
   // initial LED state
   set_user_led_state(LOW);
 
-  // listen on button pin for button press events
+  // listen on button pin for button press events, 
+  // where the voltage on the input pin rises 
   attachInterrupt(DOORBELL_BUTTON_PIN, isr_button_pressed, RISING);
 
 }
