@@ -17,7 +17,7 @@ Create a new webhook integration in your Particle Cloud account via the
 [Particle Console](https://console.particle.io/integrations/webhooks/create)
 with settings similar to this:
 
-- Event Name: evt_door
+- Event Name: household/frontdoor/bell01 (see Particle.publish call in slackdoor)
 - URL: https://hooks.slack.com/services/XXXXXX/YYYYY/ZZZZZZ
 - Request Type: Post
 - Request Format: JSON
