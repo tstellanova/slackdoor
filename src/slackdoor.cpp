@@ -37,6 +37,8 @@ void indicate_doorbell_idle() {
 }
 
 
+
+
 // Someone has pressed the doorbell button: publish an event to the Particle Cloud
 void publish_doorbell_event() {
   // Indicate that we're contacting the cloud
@@ -46,6 +48,14 @@ void publish_doorbell_event() {
   Particle.publish("household/frontdoor/bell01", EMPTY_EVT_DATA, PRIVATE);
   // Optional: send vital statistics to the cloud every time we get a doorbell button press
   Particle.publishVitals();
+}
+
+// Simulate a doorbell button press-- useful for development testing
+// Cloud functions must return int and take one String
+int fake_button_press(String extra) {
+  last_trigger_time = millis();
+  button_pressed = true;
+  return 0;
 }
 
 // Interrupt service routine called when doorbell button is pressed:
@@ -85,6 +95,10 @@ void setup() {
   // listen on button pin for button press events, 
   // where the voltage on the input pin rises 
   attachInterrupt(DOORBELL_BUTTON_PIN, isr_button_pressed, RISING);
+
+  // for convenience, device a remotely-triggerable function that will fake a button press
+  Particle.function("fakeButtonPress", fake_button_press);
+
 
 }
 
