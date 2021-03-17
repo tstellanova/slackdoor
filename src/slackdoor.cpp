@@ -36,9 +36,7 @@ void indicate_doorbell_idle() {
     delay(500);
 }
 
-
-
-
+// ============================================================================
 // Someone has pressed the doorbell button: publish an event to the Particle Cloud
 void publish_doorbell_event() {
   // Indicate that we're contacting the cloud
@@ -50,6 +48,7 @@ void publish_doorbell_event() {
   Particle.publishVitals();
 }
 
+// ============================================================================
 // Simulate a doorbell button press-- useful for development testing
 // Cloud functions must return int and take one String
 int fake_button_press(String extra) {
@@ -58,6 +57,7 @@ int fake_button_press(String extra) {
   return 0;
 }
 
+// ============================================================================
 // Interrupt service routine called when doorbell button is pressed:
 // We don't do much processing here, just note that the button was pressed
 void isr_button_pressed() {
@@ -79,10 +79,12 @@ void isr_button_pressed() {
   }
 }
 
+// ============================================================================
 // Runs once, when the device is first turned on or reset. 
 void setup() {
   // Configure the user LED pin as an output so we can light it up
   pinMode(USER_LED_PIN, OUTPUT);
+
   // Configure button input pin as pulldown:
   // It will be weakly pulled to ground (zero volts) by the Particle device,
   // and when the button is pressed it will connect to V+ and rise.
@@ -96,12 +98,13 @@ void setup() {
   // where the voltage on the input pin rises 
   attachInterrupt(DOORBELL_BUTTON_PIN, isr_button_pressed, RISING);
 
-  // for convenience, device a remotely-triggerable function that will fake a button press
+  // for convenience, define a remotely-triggerable function that will fake a button press
   Particle.function("fakeButtonPress", fake_button_press);
 
 
 }
 
+// ============================================================================
 // Runs forever after setup()
 void loop() {
 
