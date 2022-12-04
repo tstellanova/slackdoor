@@ -4,8 +4,13 @@
  * Author: Todd Stellanova
  */
 
+
 #include "Particle.h"
 
+SYSTEM_MODE(SEMI_AUTOMATIC);
+SYSTEM_THREAD(ENABLED);
+
+SerialLogHandler LogHandler(LOG_LEVEL_INFO);
 
 const pin_t USER_LED_PIN = D7; 
 const pin_t DOORBELL_BUTTON_PIN = D2;
@@ -16,6 +21,14 @@ static PinState user_led_state = LOW;
 // this volatile state variable is shared between an interrupt handler and loop()
 static volatile bool button_pressed = false;
 static system_tick_t last_trigger_time = 0;
+
+
+UDP udp_sock;
+const int UDP_LOCAL_PORT = 8888;
+const int UDP_MULTI_PORT = 1024;
+IPAddress multicastAddress(224,0,0,121);
+// 224.0.0.121
+const char buffer[] = "DOOR";
 
 
 // Force the user LED to a particular state
@@ -41,6 +54,16 @@ void indicate_doorbell_idle() {
 void publish_doorbell_event() {
   // Indicate that we're contacting the cloud
   set_user_led_state(HIGH);
+
+  // publish fast event on local LAN
+  int rc = udp_sock.sendPacket(buffer, sizeof(buffer), multicastAddress, UDP_MULTI_PORT);
+  if (rc < 0) {
+    Log.error("sendPacket err: %d",rc);
+    return;
+  }
+  else {
+    Log.info("wrote: %d", rc);
+  }
 
   // Trigger the webhook integration
   Particle.publish("household/frontdoor/bell01", EMPTY_EVT_DATA, PRIVATE);
@@ -101,6 +124,14 @@ void setup() {
   // for convenience, define a remotely-triggerable function that will fake a button press
   Particle.function("fakeButtonPress", fake_button_press);
 
+  WiFi.on();
+  Particle.connect();
+  waitFor(Particle.connected, 45000);
+
+  Log.info("connected? %d", Particle.connected());
+
+  udp_sock.begin(UDP_LOCAL_PORT);
+  // udp_sock.joinMulticast(multicastAddress);
 
 }
 
